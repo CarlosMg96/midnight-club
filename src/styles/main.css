@@ -1,0 +1,279 @@
+@layer reset, base, components;
+
+:root {
+  color-scheme: dark;
+
+  --color-bg-canvas: #070a14;
+  --color-surface: rgba(11, 16, 30, 0.88);
+  --color-surface-elevated: rgba(18, 25, 46, 0.94);
+  --color-border: rgba(126, 152, 214, 0.42);
+  --color-border-strong: rgba(56, 214, 245, 0.85);
+  --color-text-primary: #f4f7ff;
+  --color-text-secondary: #bcc8e4;
+  --color-accent: #38d6f5;
+  --color-accent-text: #06131c;
+  --color-warning: #ffb84d;
+  --color-danger: #ff6b81;
+  --color-optimal: #4be39a;
+  --color-focus: #ff47a3;
+
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, monospace;
+
+  --radius-panel: 12px;
+  --radius-control: 8px;
+}
+
+@layer reset {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--color-bg-canvas);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+  }
+}
+
+@layer base {
+  #app {
+    position: relative;
+    width: 100vw;
+    width: 100dvw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  #render-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    outline: none;
+  }
+
+  #ui-root {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  .hud-header {
+    pointer-events: auto;
+    align-self: flex-start;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-panel);
+    padding: 0.75rem 1rem;
+    backdrop-filter: blur(10px);
+    max-width: min(28rem, calc(100dvw - 2rem));
+  }
+
+  .hud-title {
+    margin: 0;
+    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.35rem);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-primary);
+  }
+
+  .hud-subtitle {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+  }
+
+  .hud-panel {
+    pointer-events: auto;
+    align-self: flex-start;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-panel);
+    padding: 0.9rem 1rem;
+    backdrop-filter: blur(10px);
+    width: min(25rem, calc(100dvw - 2rem));
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .hud-section-title {
+    margin: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-secondary);
+  }
+
+  .hud-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem 0.75rem;
+    margin: 0;
+  }
+
+  .hud-metric {
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-control);
+    padding: 0.5rem 0.65rem;
+  }
+
+  .hud-metric--wide {
+    grid-column: 1 / -1;
+  }
+
+  .hud-metric dt {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-secondary);
+  }
+
+  .hud-metric dd {
+    margin: 0.2rem 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    overflow-wrap: anywhere;
+  }
+
+  .hud-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .hud-badge--optimal {
+    color: var(--color-optimal);
+  }
+
+  .hud-badge--acceptable {
+    color: var(--color-warning);
+  }
+
+  .hud-badge--low {
+    color: var(--color-danger);
+  }
+
+  .hud-fallback-note {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--color-warning);
+  }
+
+  .hud-profile-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .hud-profile-btn {
+    flex: 1 1 auto;
+    min-block-size: 36px;
+    min-inline-size: 80px;
+    padding: 0.45rem 0.75rem;
+    border-radius: var(--radius-control);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-elevated);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color 140ms ease,
+      border-color 140ms ease;
+  }
+
+  .hud-profile-btn:hover:not(:disabled, [aria-pressed='true']) {
+    border-color: var(--color-border-strong);
+    background: rgba(34, 48, 84, 0.96);
+  }
+
+  .hud-profile-btn[aria-pressed='true'] {
+    background: var(--color-accent);
+    color: var(--color-accent-text);
+    border-color: var(--color-accent);
+  }
+
+  .hud-profile-btn:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .hud-profile-desc {
+    margin: 0;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    color: var(--color-text-secondary);
+  }
+
+  .hud-error {
+    pointer-events: auto;
+    margin: auto;
+    max-width: 32rem;
+    padding: 1.25rem;
+    border-radius: var(--radius-panel);
+    border: 2px solid var(--color-danger);
+    background: var(--color-surface-elevated);
+  }
+
+  .hud-error h2 {
+    margin-top: 0;
+    color: var(--color-danger);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    clip-path: inset(50%);
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    white-space: nowrap;
+  }
+
+  @media (pointer: coarse) {
+    .hud-profile-btn {
+      min-block-size: 44px;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .hud-header,
+    .hud-panel,
+    .hud-metric,
+    .hud-profile-btn {
+      background: Canvas;
+      color: CanvasText;
+      border: 1px solid CanvasText;
+    }
+
+    .hud-profile-btn[aria-pressed='true'] {
+      background: Highlight;
+      color: HighlightText;
+      border-color: Highlight;
+    }
+
+    .hud-profile-btn:focus-visible {
+      outline: 3px solid Highlight;
+    }
+  }
+}

@@ -118,16 +118,88 @@ export function buildTsuruB13Mesh(scene: Scene, initialTuning: TuningConfig): Ts
   // 1. Carrocería inferior suavizada del Nissan Tsuru B13 (3 volúmenes, 1992-2017)
   // El frente apunta hacia +Z; la cajuela hacia -Z
   const stations: readonly BodyStation[] = [
-    { z: -2.14, halfWidth: 0.76, sillY: 0.24, beltY: 0.72, deckY: 0.84, roofY: 0.85, roofHalfW: 0.58 },
-    { z: -1.96, halfWidth: 0.83, sillY: 0.21, beltY: 0.78, deckY: 0.9, roofY: 0.91, roofHalfW: 0.65 },
-    { z: -1.32, halfWidth: 0.85, sillY: 0.2, beltY: 0.82, deckY: 0.92, roofY: 0.93, roofHalfW: 0.68 },
-    { z: -1.02, halfWidth: 0.85, sillY: 0.2, beltY: 0.83, deckY: 0.93, roofY: 1.36, roofHalfW: 0.64 },
-    { z: -0.58, halfWidth: 0.85, sillY: 0.2, beltY: 0.83, deckY: 0.93, roofY: 1.39, roofHalfW: 0.65 },
-    { z: 0.25, halfWidth: 0.85, sillY: 0.2, beltY: 0.82, deckY: 0.92, roofY: 1.38, roofHalfW: 0.65 },
+    {
+      z: -2.14,
+      halfWidth: 0.76,
+      sillY: 0.24,
+      beltY: 0.72,
+      deckY: 0.84,
+      roofY: 0.85,
+      roofHalfW: 0.58,
+    },
+    {
+      z: -1.96,
+      halfWidth: 0.83,
+      sillY: 0.21,
+      beltY: 0.78,
+      deckY: 0.9,
+      roofY: 0.91,
+      roofHalfW: 0.65,
+    },
+    {
+      z: -1.32,
+      halfWidth: 0.85,
+      sillY: 0.2,
+      beltY: 0.82,
+      deckY: 0.92,
+      roofY: 0.93,
+      roofHalfW: 0.68,
+    },
+    {
+      z: -1.02,
+      halfWidth: 0.85,
+      sillY: 0.2,
+      beltY: 0.83,
+      deckY: 0.93,
+      roofY: 1.36,
+      roofHalfW: 0.64,
+    },
+    {
+      z: -0.58,
+      halfWidth: 0.85,
+      sillY: 0.2,
+      beltY: 0.83,
+      deckY: 0.93,
+      roofY: 1.39,
+      roofHalfW: 0.65,
+    },
+    {
+      z: 0.25,
+      halfWidth: 0.85,
+      sillY: 0.2,
+      beltY: 0.82,
+      deckY: 0.92,
+      roofY: 1.38,
+      roofHalfW: 0.65,
+    },
     { z: 0.78, halfWidth: 0.84, sillY: 0.2, beltY: 0.8, deckY: 0.9, roofY: 0.91, roofHalfW: 0.66 },
-    { z: 1.52, halfWidth: 0.83, sillY: 0.21, beltY: 0.74, deckY: 0.84, roofY: 0.85, roofHalfW: 0.66 },
-    { z: 1.98, halfWidth: 0.8, sillY: 0.22, beltY: 0.68, deckY: 0.75, roofY: 0.76, roofHalfW: 0.62 },
-    { z: 2.16, halfWidth: 0.73, sillY: 0.25, beltY: 0.6, deckY: 0.68, roofY: 0.69, roofHalfW: 0.54 },
+    {
+      z: 1.52,
+      halfWidth: 0.83,
+      sillY: 0.21,
+      beltY: 0.74,
+      deckY: 0.84,
+      roofY: 0.85,
+      roofHalfW: 0.66,
+    },
+    {
+      z: 1.98,
+      halfWidth: 0.8,
+      sillY: 0.22,
+      beltY: 0.68,
+      deckY: 0.75,
+      roofY: 0.76,
+      roofHalfW: 0.62,
+    },
+    {
+      z: 2.16,
+      halfWidth: 0.73,
+      sillY: 0.25,
+      beltY: 0.6,
+      deckY: 0.68,
+      roofY: 0.69,
+      roofHalfW: 0.54,
+    },
   ];
 
   // Casco inferior de carrocería (sill -> beltline -> hood/trunk deck)
@@ -569,8 +641,7 @@ export function buildTsuruB13Mesh(scene: Scene, initialTuning: TuningConfig): Ts
       tuning.stance === 'DRIFT_SPEC' ? -0.06 : tuning.stance === 'LOWERED' ? -0.045 : 0;
     bodyPivot.position.y = rideOffset;
 
-    const camber =
-      tuning.stance === 'DRIFT_SPEC' ? 0.065 : tuning.stance === 'LOWERED' ? 0.025 : 0;
+    const camber = tuning.stance === 'DRIFT_SPEC' ? 0.065 : tuning.stance === 'LOWERED' ? 0.025 : 0;
     camberNodes.forEach((node, idx) => {
       const sign = idx % 2 === 0 ? -1 : 1;
       node.rotation.z = sign * camber;
@@ -578,9 +649,7 @@ export function buildTsuruB13Mesh(scene: Scene, initialTuning: TuningConfig): Ts
   };
 
   const setBraking = (braking: boolean): void => {
-    taillightMat.emissiveColor = braking
-      ? new Color3(3.2, 0.14, 0.14)
-      : new Color3(1.1, 0.08, 0.1);
+    taillightMat.emissiveColor = braking ? new Color3(3.2, 0.14, 0.14) : new Color3(1.1, 0.08, 0.1);
   };
 
   applyTuning(initialTuning);

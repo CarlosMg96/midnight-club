@@ -3,17 +3,18 @@
 :root {
   color-scheme: dark;
 
-  --color-bg-canvas: #070a14;
-  --color-surface: rgba(11, 16, 30, 0.88);
-  --color-surface-elevated: rgba(18, 25, 46, 0.94);
+  --color-bg-canvas: #060913;
+  --color-surface: rgba(8, 13, 24, 0.88);
+  --color-surface-elevated: rgba(16, 24, 42, 0.95);
   --color-border: rgba(126, 152, 214, 0.42);
-  --color-border-strong: rgba(56, 214, 245, 0.85);
+  --color-border-strong: rgba(56, 214, 245, 0.88);
   --color-text-primary: #f4f7ff;
   --color-text-secondary: #bcc8e4;
   --color-accent: #38d6f5;
+  --color-accent-bright: #8ef6ff;
   --color-accent-text: #06131c;
   --color-warning: #ffb84d;
-  --color-danger: #ff6b81;
+  --color-danger: #ff4769;
   --color-optimal: #4be39a;
   --color-focus: #ff47a3;
 
@@ -63,50 +64,392 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 1rem;
+    padding: clamp(0.65rem, 1.4vw, 1.15rem);
     box-sizing: border-box;
+    gap: 0.75rem;
   }
 }
 
 @layer components {
-  .hud-header {
-    pointer-events: auto;
-    align-self: flex-start;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-panel);
-    padding: 0.75rem 1rem;
-    backdrop-filter: blur(10px);
-    max-width: min(28rem, calc(100dvw - 2rem));
+  .hud-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
   }
 
-  .hud-title {
-    margin: 0;
-    font-size: clamp(1rem, 0.9rem + 0.5vw, 1.35rem);
+  .hud-mc-top-left {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.38rem;
+    max-width: min(36rem, calc(100dvw - 7rem));
+  }
+
+  .hud-race-clock {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+
+  .hud-timer-mc {
+    font-family: var(--font-mono);
+    font-size: clamp(1.75rem, 1.35rem + 1.4vw, 2.55rem);
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    color: #54e7ff;
+    text-shadow:
+      0 2px 0 #04101c,
+      -1px -1px 0 #04101c,
+      1px -1px 0 #04101c,
+      0 0 14px rgba(56, 214, 245, 0.68);
+  }
+
+  .hud-lap-label {
+    margin-top: 0.14rem;
+    font-family: var(--font-sans);
+    font-size: 0.82rem;
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    color: #e8f6ff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.95);
+  }
+
+  .hud-mini-diag {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    background: rgba(7, 13, 24, 0.74);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 999px;
+    padding: 0.22rem 0.65rem;
+    backdrop-filter: blur(8px);
+  }
+
+  .hud-mini-diag[data-status='OPTIMAL'] {
+    border-color: rgba(75, 227, 154, 0.72);
+  }
+
+  .hud-mini-diag[data-status='ACCEPTABLE'] {
+    border-color: rgba(255, 184, 77, 0.82);
+  }
+
+  .hud-mini-diag[data-status='LOW'] {
+    border-color: rgba(255, 71, 105, 0.85);
+  }
+
+  .hud-action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.42rem;
+    margin-top: 0.1rem;
+  }
+
+  .hud-race-banner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: fit-content;
+    margin-top: 0.18rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    border: 2px solid #46e4ff;
+    background: rgba(8, 16, 30, 0.9);
+    color: #fff3b0;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 800;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+    box-shadow:
+      0 0 18px rgba(70, 228, 255, 0.45),
+      inset 0 0 10px rgba(255, 209, 92, 0.25);
+  }
+
+  .hud-race-banner[hidden] {
+    display: none;
+  }
+
+  .hud-pursuit-banner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    width: fit-content;
+    margin-top: 0.18rem;
+    padding: 0.42rem 0.85rem;
+    border-radius: 999px;
+    border: 2px solid #ff3355;
+    background: rgba(18, 10, 26, 0.9);
+    color: #fff6f8;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    box-shadow:
+      0 0 18px rgba(255, 51, 85, 0.5),
+      inset 0 0 10px rgba(56, 168, 255, 0.28);
+    animation: pursuit-pulse 0.48s steps(2, end) infinite;
+  }
+
+  .hud-pursuit-banner[hidden] {
+    display: none;
+  }
+
+  .hud-arrest-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    pointer-events: auto;
+    background: rgba(6, 10, 20, 0.62);
+    backdrop-filter: blur(5px);
+  }
+
+  .hud-arrest-overlay[hidden] {
+    display: none;
+  }
+
+  .hud-arrest-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.72rem;
+    max-width: min(30rem, 92dvw);
+    padding: 1.55rem 1.85rem;
+    border-radius: 16px;
+    border: 3px solid #ff3355;
+    background: rgba(11, 16, 30, 0.94);
+    box-shadow:
+      0 18px 46px rgba(0, 0, 0, 0.68),
+      0 0 28px rgba(255, 51, 85, 0.55);
+    animation: pursuit-pulse 0.48s steps(2, end) infinite;
+  }
+
+  .hud-arrest-title {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: clamp(1.65rem, 1.2rem + 2vw, 2.35rem);
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    color: #ff4769;
+    text-shadow: 0 0 18px rgba(255, 71, 105, 0.65);
+  }
+
+  .hud-arrest-subtitle {
+    margin: 0;
+    font-size: 0.88rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #93d8ff;
+  }
+
+  .hud-arrest-detail {
+    margin: 0;
+    font-size: 0.92rem;
     color: var(--color-text-primary);
   }
 
-  .hud-subtitle {
-    margin: 0.25rem 0 0;
-    font-size: 0.85rem;
-    color: var(--color-text-secondary);
+  @keyframes pursuit-pulse {
+    0% {
+      border-color: #ff3355;
+      box-shadow: 0 0 18px rgba(255, 51, 85, 0.65);
+    }
+
+    50% {
+      border-color: #38a8ff;
+      box-shadow: 0 0 18px rgba(56, 168, 255, 0.7);
+    }
+
+    100% {
+      border-color: #ff3355;
+      box-shadow: 0 0 18px rgba(255, 51, 85, 0.65);
+    }
   }
 
-  .hud-panel {
-    pointer-events: auto;
-    align-self: flex-start;
-    background: var(--color-surface);
+  .hud-action-btn {
+    min-block-size: 34px;
+    padding: 0.34rem 0.72rem;
+    border-radius: 999px;
     border: 1px solid var(--color-border);
+    background: rgba(11, 18, 32, 0.84);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition:
+      background-color 140ms ease,
+      border-color 140ms ease;
+  }
+
+  .hud-action-btn:hover:not(:disabled) {
+    border-color: var(--color-border-strong);
+    background: rgba(26, 42, 74, 0.94);
+  }
+
+  .hud-action-btn[aria-expanded='true'] {
+    background: var(--color-accent);
+    color: var(--color-accent-text);
+    border-color: var(--color-accent);
+  }
+
+  .hud-action-btn:focus-visible,
+  .hud-profile-btn:focus-visible,
+  .hud-map-zone-btn:focus-visible,
+  .garage-select:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+
+  .hud-position-badge {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.08rem;
+    font-style: italic;
+    font-weight: 900;
+    line-height: 0.95;
+    padding-inline-end: 0.25rem;
+    text-shadow:
+      0 3px 0 #04101c,
+      -1px -1px 0 #04101c,
+      1px -1px 0 #04101c,
+      0 0 16px rgba(56, 214, 245, 0.55);
+  }
+
+  .hud-position-rank {
+    font-family: var(--font-mono);
+    font-size: clamp(2.4rem, 1.8rem + 2vw, 3.6rem);
+    color: #46e4ff;
+  }
+
+  .hud-position-total {
+    font-family: var(--font-mono);
+    font-size: clamp(1.3rem, 1.05rem + 0.9vw, 1.95rem);
+    color: #eef6ff;
+  }
+
+  /* Panel colapsable de opciones gráficas y diagnóstico */
+  .hud-settings-drawer {
+    position: absolute;
+    top: 7.5rem;
+    left: clamp(0.65rem, 1.4vw, 1.15rem);
+    z-index: 25;
+    pointer-events: auto;
+    width: min(23.5rem, calc(100dvw - 2rem));
+    max-height: calc(100dvh - 10rem);
+    overflow-y: auto;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
     border-radius: var(--radius-panel);
     padding: 0.9rem 1rem;
-    backdrop-filter: blur(10px);
-    width: min(25rem, calc(100dvw - 2rem));
+    backdrop-filter: blur(12px);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.65rem;
+  }
+
+  .hud-settings-drawer[hidden],
+  .hud-map-drawer[hidden],
+  .garage-drawer[hidden] {
+    display: none !important;
+  }
+
+  /* Panel colapsable de Mapa Metropolitano CDMX + Estado de México */
+  .hud-map-drawer {
+    position: absolute;
+    top: 7.5rem;
+    left: clamp(0.65rem, 1.4vw, 1.15rem);
+    z-index: 25;
+    pointer-events: auto;
+    width: min(29rem, calc(100dvw - 2rem));
+    max-height: calc(100dvh - 10.5rem);
+    overflow-y: auto;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-panel);
+    padding: 0.9rem 1rem;
+    backdrop-filter: blur(12px);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .hud-map-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12.2rem, 1fr));
+    gap: 0.45rem;
+  }
+
+  .hud-map-zone-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: left;
+    min-block-size: 40px;
+    padding: 0.42rem 0.6rem;
+    border-radius: var(--radius-control);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-elevated);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color 140ms ease,
+      border-color 140ms ease;
+  }
+
+  .hud-map-zone-btn:hover:not(:disabled, [aria-pressed='true']) {
+    border-color: var(--color-border-strong);
+    background: rgba(28, 44, 78, 0.96);
+  }
+
+  .hud-map-zone-btn[aria-pressed='true'] {
+    background: rgba(56, 214, 245, 0.18);
+    border-color: var(--color-accent);
+  }
+
+  .hud-zone-region {
+    flex-shrink: 0;
+    padding: 0.15rem 0.36rem;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    background: rgba(56, 214, 245, 0.2);
+    color: #7eeeff;
+  }
+
+  .hud-map-zone-btn[data-region='EDOMEX'] .hud-zone-region {
+    background: rgba(255, 162, 66, 0.22);
+    color: #ffc272;
+  }
+
+  .hud-zone-name {
+    line-height: 1.25;
+  }
+
+  .hud-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
   }
 
   .hud-section-title {
@@ -121,7 +464,7 @@
   .hud-metrics {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.5rem 0.75rem;
+    gap: 0.45rem 0.65rem;
     margin: 0;
   }
 
@@ -129,7 +472,7 @@
     background: var(--color-surface-elevated);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-control);
-    padding: 0.5rem 0.65rem;
+    padding: 0.42rem 0.6rem;
   }
 
   .hud-metric--wide {
@@ -137,16 +480,16 @@
   }
 
   .hud-metric dt {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--color-text-secondary);
   }
 
   .hud-metric dd {
-    margin: 0.2rem 0 0;
+    margin: 0.16rem 0 0;
     font-family: var(--font-mono);
-    font-size: 0.9rem;
+    font-size: 0.84rem;
     font-weight: 600;
     color: var(--color-text-primary);
     overflow-wrap: anywhere;
@@ -155,7 +498,7 @@
   .hud-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.3rem;
   }
 
   .hud-badge--optimal {
@@ -172,27 +515,27 @@
 
   .hud-fallback-note {
     margin: 0;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     color: var(--color-warning);
   }
 
   .hud-profile-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.45rem;
   }
 
   .hud-profile-btn {
     flex: 1 1 auto;
     min-block-size: 36px;
-    min-inline-size: 80px;
-    padding: 0.45rem 0.75rem;
+    min-inline-size: 76px;
+    padding: 0.4rem 0.65rem;
     border-radius: var(--radius-control);
     border: 1px solid var(--color-border);
     background: var(--color-surface-elevated);
     color: var(--color-text-primary);
     font-family: var(--font-sans);
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 600;
     cursor: pointer;
     transition:
@@ -211,16 +554,213 @@
     border-color: var(--color-accent);
   }
 
-  .hud-profile-btn:focus-visible {
-    outline: 3px solid var(--color-focus);
-    outline-offset: 2px;
+  .hud-profile-desc,
+  .hud-controls-hint {
+    margin: 0;
+    font-size: 0.76rem;
+    line-height: 1.38;
+    color: var(--color-text-secondary);
   }
 
-  .hud-profile-desc {
+  /* Fila inferior: Radar minimapa (izquierda) y Tacómetro MC3 (derecha) */
+  .hud-bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-top: auto;
+  }
+
+  .hud-minimap-shell {
+    pointer-events: auto;
+    width: 204px;
+    height: 204px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  .hud-minimap {
+    display: block;
+    width: 204px;
+    height: 204px;
+  }
+
+  .hud-gauge-cluster {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+    flex-shrink: 0;
+  }
+
+  .hud-gauge-frame {
+    position: relative;
+    width: 324px;
+    height: 128px;
+  }
+
+  .hud-gauge-canvas {
+    display: block;
+    width: 324px;
+    height: 128px;
+  }
+
+  .hud-mc-bar-readout {
+    position: absolute;
+    left: 88px;
+    top: 67px;
+    width: 216px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.45rem;
+    padding: 0 10px 0 8px;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+
+  .hud-mc-speed-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 0.24rem;
+  }
+
+  .hud-speed-value {
+    font-family: var(--font-mono);
+    font-size: 1.48rem;
+    font-weight: 900;
+    font-style: italic;
+    line-height: 1;
+    color: #f4fbff;
+    text-shadow: 0 0 8px rgba(56, 214, 245, 0.48);
+  }
+
+  .hud-speed-unit {
+    font-family: var(--font-sans);
+    font-size: 0.64rem;
+    font-weight: 800;
+    font-style: italic;
+    color: #9dd4ea;
+  }
+
+  .hud-gear-badge {
+    min-inline-size: 1.55rem;
+    min-block-size: 1.45rem;
+    display: grid;
+    place-items: center;
+    border-radius: 4px;
+    border: 1px solid rgba(90, 224, 255, 0.72);
+    background: rgba(12, 32, 54, 0.92);
+    font-family: var(--font-mono);
+    font-size: 0.98rem;
+    font-weight: 900;
+    font-style: italic;
+    color: #54e7ff;
+  }
+
+  .hud-boost-flag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    color: #7ee3ff;
+  }
+
+  .hud-boost-flag[data-mode='NITRO'] {
+    color: #b4feff;
+    text-shadow: 0 0 8px rgba(142, 246, 255, 0.9);
+  }
+
+  .hud-boost-flag[data-mode='DRIFT'] {
+    color: var(--color-warning);
+  }
+
+  .hud-boost-flag[data-mode='BRAKE'] {
+    color: var(--color-danger);
+  }
+
+  .hud-street-plate {
+    width: 246px;
+    padding: 0.24rem 0.75rem;
+    border-radius: 4px;
+    border: 1px solid rgba(114, 214, 245, 0.78);
+    background: linear-gradient(180deg, rgba(16, 28, 44, 0.92) 0%, rgba(7, 12, 22, 0.96) 100%);
+    color: #e9f6ff;
+    font-family: var(--font-sans);
+    font-size: 0.76rem;
+    font-weight: 800;
+    font-style: italic;
+    letter-spacing: 0.12em;
+    text-align: center;
+    text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+    box-sizing: border-box;
+  }
+
+  /* Panel lateral de Garaje y Tuning */
+  .garage-drawer {
+    position: absolute;
+    top: 4.9rem;
+    right: clamp(0.65rem, 1.4vw, 1.15rem);
+    z-index: 25;
+    pointer-events: auto;
+    width: min(22.5rem, calc(100dvw - 2rem));
+    max-height: calc(100dvh - 13rem);
+    overflow-y: auto;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-panel);
+    padding: 1rem;
+    backdrop-filter: blur(12px);
+    box-sizing: border-box;
+  }
+
+  .garage-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .garage-title {
     margin: 0;
-    font-size: 0.78rem;
-    line-height: 1.35;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .garage-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .garage-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.28rem;
+  }
+
+  .garage-field label {
+    font-size: 0.76rem;
+    font-weight: 600;
     color: var(--color-text-secondary);
+  }
+
+  .garage-select {
+    min-block-size: 38px;
+    padding: 0.45rem 0.6rem;
+    border-radius: var(--radius-control);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-elevated);
+    color: var(--color-text-primary);
+    font-family: var(--font-sans);
+    font-size: 0.86rem;
   }
 
   .hud-error {
@@ -250,30 +790,66 @@
     white-space: nowrap;
   }
 
+  @media (max-width: 680px) {
+    .hud-minimap-shell {
+      transform: scale(0.76);
+      transform-origin: bottom left;
+    }
+
+    .hud-gauge-cluster {
+      transform: scale(0.78);
+      transform-origin: bottom right;
+    }
+  }
+
   @media (pointer: coarse) {
-    .hud-profile-btn {
+    .hud-action-btn,
+    .hud-profile-btn,
+    .hud-map-zone-btn,
+    .garage-select {
       min-block-size: 44px;
     }
   }
 
   @media (forced-colors: active) {
-    .hud-header,
-    .hud-panel,
+    .hud-settings-drawer,
+    .hud-map-drawer,
     .hud-metric,
-    .hud-profile-btn {
+    .hud-action-btn,
+    .hud-profile-btn,
+    .hud-map-zone-btn,
+    .hud-street-plate,
+    .hud-mini-diag,
+    .hud-race-banner,
+    .hud-pursuit-banner,
+    .hud-arrest-card,
+    .garage-drawer,
+    .garage-select {
       background: Canvas;
       color: CanvasText;
       border: 1px solid CanvasText;
     }
 
-    .hud-profile-btn[aria-pressed='true'] {
+    .hud-profile-btn[aria-pressed='true'],
+    .hud-map-zone-btn[aria-pressed='true'],
+    .hud-action-btn[aria-expanded='true'] {
       background: Highlight;
       color: HighlightText;
       border-color: Highlight;
     }
 
-    .hud-profile-btn:focus-visible {
+    .hud-action-btn:focus-visible,
+    .hud-profile-btn:focus-visible,
+    .hud-map-zone-btn:focus-visible,
+    .garage-select:focus-visible {
       outline: 3px solid Highlight;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hud-pursuit-banner,
+    .hud-arrest-card {
+      animation: none;
     }
   }
 }

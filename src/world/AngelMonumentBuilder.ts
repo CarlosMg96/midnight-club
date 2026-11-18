@@ -11,6 +11,7 @@ import {
   type Scene,
 } from '@babylonjs/core';
 import { NOCTURNAL_COLORS, TEST_AVENUE_CONFIG, type RgbTuple } from '../config/GameConfig';
+import { createAngelColumnTricolorTexture } from '../engine/ProceduralTextures';
 
 function toColor3(rgb: RgbTuple): Color3 {
   return new Color3(rgb.r, rgb.g, rgb.b);
@@ -57,10 +58,13 @@ export class AngelMonumentBuilder {
     canteraMat.metallic = 0.04;
     canteraMat.roughness = 0.78;
 
-    const marbleMat = new PBRMaterial('angel-marble-pbr', this.scene);
-    marbleMat.albedoColor = new Color3(0.68, 0.65, 0.6);
-    marbleMat.metallic = 0.06;
-    marbleMat.roughness = 0.52;
+    const tricolorTex = createAngelColumnTricolorTexture(this.scene);
+    const marbleMat = new PBRMaterial('angel-marble-tricolor-pbr', this.scene);
+    marbleMat.albedoTexture = tricolorTex.albedoTexture;
+    marbleMat.emissiveTexture = tricolorTex.emissiveTexture;
+    marbleMat.emissiveColor = new Color3(0.75, 0.75, 0.75);
+    marbleMat.metallic = 0.08;
+    marbleMat.roughness = 0.48;
 
     const bronzeMat = new PBRMaterial('angel-bronze-pbr', this.scene);
     bronzeMat.albedoColor = new Color3(0.18, 0.16, 0.13);
@@ -77,25 +81,25 @@ export class AngelMonumentBuilder {
 
     // 1. Escalinata circular y basamento de cantera (Lathe)
     const steppedBaseProfile = [
-      new Vector3(11.8, 0, 0),
-      new Vector3(11.8, 0.35, 0),
-      new Vector3(11.1, 0.35, 0),
-      new Vector3(11.1, 0.7, 0),
-      new Vector3(10.4, 0.7, 0),
-      new Vector3(10.4, 1.05, 0),
-      new Vector3(9.7, 1.05, 0),
-      new Vector3(9.7, 1.4, 0),
-      new Vector3(8.8, 1.4, 0),
-      new Vector3(8.8, 1.85, 0),
-      new Vector3(6.8, 1.85, 0),
-      new Vector3(6.4, 2.3, 0),
-      new Vector3(5.6, 2.3, 0),
-      new Vector3(5.6, 6.2, 0),
-      new Vector3(6.1, 6.5, 0),
-      new Vector3(5.0, 6.9, 0),
-      new Vector3(4.5, 10.2, 0),
-      new Vector3(5.0, 10.6, 0),
-      new Vector3(3.4, 11.2, 0),
+      new Vector3(8.4, 0, 0),
+      new Vector3(8.4, 0.35, 0),
+      new Vector3(7.9, 0.35, 0),
+      new Vector3(7.9, 0.7, 0),
+      new Vector3(7.4, 0.7, 0),
+      new Vector3(7.4, 1.05, 0),
+      new Vector3(6.9, 1.05, 0),
+      new Vector3(6.9, 1.4, 0),
+      new Vector3(6.4, 1.4, 0),
+      new Vector3(6.4, 1.85, 0),
+      new Vector3(5.6, 1.85, 0),
+      new Vector3(5.3, 2.3, 0),
+      new Vector3(4.8, 2.3, 0),
+      new Vector3(4.8, 6.2, 0),
+      new Vector3(5.2, 6.5, 0),
+      new Vector3(4.3, 6.9, 0),
+      new Vector3(3.9, 10.2, 0),
+      new Vector3(4.4, 10.6, 0),
+      new Vector3(3.1, 11.2, 0),
       new Vector3(0.01, 11.2, 0),
     ];
 
@@ -111,20 +115,20 @@ export class AngelMonumentBuilder {
     // 2. Cuatro esculturas alegóricas en bronce en las esquinas del basamento
     const statueProfile = [
       new Vector3(0.01, 0, 0),
-      new Vector3(0.85, 0, 0),
-      new Vector3(0.7, 0.6, 0),
-      new Vector3(0.55, 1.4, 0),
-      new Vector3(0.65, 2.1, 0),
-      new Vector3(0.35, 2.6, 0),
-      new Vector3(0.28, 3.0, 0),
+      new Vector3(0.75, 0, 0),
+      new Vector3(0.62, 0.6, 0),
+      new Vector3(0.48, 1.4, 0),
+      new Vector3(0.58, 2.1, 0),
+      new Vector3(0.32, 2.6, 0),
+      new Vector3(0.25, 3.0, 0),
       new Vector3(0.01, 3.15, 0),
     ];
 
     const corners: ReadonlyArray<readonly [number, number]> = [
-      [-5.3, -5.3],
-      [5.3, -5.3],
-      [-5.3, 5.3],
-      [5.3, 5.3],
+      [-4.2, -4.2],
+      [4.2, -4.2],
+      [-4.2, 4.2],
+      [4.2, 4.2],
     ];
     corners.forEach(([cx, cz], idx) => {
       const statue = MeshBuilder.CreateLathe(
@@ -222,8 +226,8 @@ export class AngelMonumentBuilder {
 
     const floodAngles = [0, Math.PI / 2, Math.PI, (Math.PI * 3) / 2];
     floodAngles.forEach((angle, idx) => {
-      const fx = Math.cos(angle) * 7.5;
-      const fz = Math.sin(angle) * 7.5;
+      const fx = Math.cos(angle) * 6.0;
+      const fz = Math.sin(angle) * 6.0;
       const lamp = MeshBuilder.CreateCylinder(
         `angel-uplight-${idx}`,
         { height: 0.22, diameter: 0.45, tessellation: 10 },
@@ -237,18 +241,28 @@ export class AngelMonumentBuilder {
 
     const monumentBaseGlow = new PointLight(
       'angel-base-uplight',
-      new Vector3(0, 12, -8),
+      new Vector3(0, 8, -7.2),
       this.scene,
     );
     monumentBaseGlow.parent = this.root;
-    monumentBaseGlow.diffuse = new Color3(1.0, 0.82, 0.48);
-    monumentBaseGlow.intensity = 45;
-    monumentBaseGlow.range = 42;
+    monumentBaseGlow.diffuse = new Color3(0.18, 0.95, 0.52);
+    monumentBaseGlow.intensity = 52;
+    monumentBaseGlow.range = 34;
+
+    const columnRedGlow = new PointLight(
+      'angel-capital-red-light',
+      new Vector3(0, 32, -5.5),
+      this.scene,
+    );
+    columnRedGlow.parent = this.root;
+    columnRedGlow.diffuse = new Color3(0.95, 0.16, 0.28);
+    columnRedGlow.intensity = 42;
+    columnRedGlow.range = 28;
 
     const angelTopGlow = new PointLight('angel-crown-light', new Vector3(0, 41, -4.5), this.scene);
     angelTopGlow.parent = this.root;
     angelTopGlow.diffuse = new Color3(1.0, 0.86, 0.52);
-    angelTopGlow.intensity = 38;
+    angelTopGlow.intensity = 46;
     angelTopGlow.range = 28;
 
     this.reflectables.push(pedestal, column, angelBody, raisedArm, laurelWreath);
